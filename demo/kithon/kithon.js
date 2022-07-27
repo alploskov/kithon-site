@@ -20,7 +20,7 @@ async function main(){
     await pyodide.loadPackage("micropip");
     await pyodide.runPythonAsync(`
 import micropip
-await micropip.install('kithon/kithon-0.2.0-py3-none-any.whl')
+await micropip.install('kithon')
 `);
     await pyodide.runPythonAsync(`
 from kithon import Transpiler
