@@ -5,8 +5,8 @@ let editor = ace.edit("editor");
 editor.setTheme("ace/theme/monokai");
 editor.getSession().setMode("ace/mode/python");
 editor.setShowPrintMargin(false);
+editor.setValue("# write your Python code...");
 editor.clearSelection();
-
 editor.getSession().on('change', () => {
     re_generate();
 });
@@ -46,7 +46,7 @@ let read_code = () => {
 };
 
 let saved_code = 'error';
-let re_generate = (code) => {
+let re_generate = () => {
     let out_code = '';
     try {
 	gen = pyscript.interpreter.globals.get('gen');
