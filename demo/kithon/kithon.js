@@ -1,47 +1,59 @@
-var pyodide = null;
-var lang = document.getElementById('chose-lang').value;
+window.onload = () => {
+let lang = document.getElementById('chose-lang').value;
+
+let editor = ace.edit("editor");
+editor.setTheme("ace/theme/monokai");
+editor.getSession().setMode("ace/mode/python");
+editor.setShowPrintMargin(false);
+editor.clearSelection();
+
+editor.getSession().on('change', () => {
+    re_generate();
+});
+
+let output = ace.edit("output");
+output.renderer.$cursorLayer.element.style.display = 'none';
+output.setTheme("ace/theme/chrome");
+output.setReadOnly(true);
+output.setShowPrintMargin(false);
+output.getSession().mergeUndoDeltas = true;
+output.setHighlightActiveLine(false);
+
+let set_output_lang = (lang) => {
+    let langs = new Map()
+	.set("js", "javascript")
+        .set("go", "golang");
+    output.getSession().setMode(`ace/mode/${langs.get(lang)}`);
+};
+
+set_output_lang(lang);
 
 document.getElementById('chose-lang').addEventListener('change', (event) => {
     lang = event.target.value;
-    if(lang == 'js'){
-	output.getSession().setMode("ace/mode/javascript");
-    } else if(lang == 'go'){
-	output.getSession().setMode("ace/mode/golang");
-    }
-    output.setValue(generate(editor.getValue()));
-    output.clearSelection();
-    output.setHighlightActiveLine(false);
+    set_output_lang(lang);
+    re_generate();
 });
 
-async function main(){
-    pyodide = await loadPyodide({
-        indexURL : "https://cdn.jsdelivr.net/pyodide/v0.18.0/full/"
-    });
-    await pyodide.loadPackage("micropip");
-    await pyodide.runPythonAsync(`
-import micropip
-await micropip.install('kithon')
-`);
-    await pyodide.runPythonAsync(`
-from kithon import Transpiler
-import js
-transpiler_js = Transpiler()
-transpiler_js.get_lang('js')
-transpiler_go = Transpiler()
-transpiler_go.get_lang('go')
-`);
-}
+let write_code = (code) => {
+    output.setValue(code);
+    output.clearSelection();
+    output.setHighlightActiveLine(false);
+};
 
-main();
+let read_code = () => {
+    return editor.getValue();
+};
 
-var saved_code = 'error';
-
-function generate(code){
-    try{
-	    out_code = pyodide.runPython(`transpiler_${lang}.generate("""${code}""")`);
-	    saved_code = out_code;
+let saved_code = 'error';
+let re_generate = (code) => {
+    let out_code = '';
+    try {
+	gen = pyscript.interpreter.globals.get('gen');
+	out_code = gen(lang, read_code());
+	saved_code = out_code;
     } catch {
-	    out_code = saved_code;
+	out_code = saved_code;
     }
-    return out_code;
+    write_code(out_code);
+};
 }
