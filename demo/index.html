@@ -18,6 +18,7 @@
 	<select id="chose-lang">
 	  <option value="js">JavaScript</option>
 	  <option value="go">Go</option>
+	  <option value="lua">Lua</option>
 	</select>
       </div>
     </div>
@@ -30,6 +31,7 @@
       transpilers = {
           "js": Transpiler(lang="js"),
           "go": Transpiler(lang="go"),
+          "lua": Transpiler(lang="lua"),
       }
       def gen(lang, code):
           return transpilers[lang].generate(code)

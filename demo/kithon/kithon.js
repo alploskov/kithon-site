@@ -21,8 +21,9 @@ output.setHighlightActiveLine(false);
 
 let set_output_lang = (lang) => {
     let langs = new Map()
+	.set("lua", "lua")
 	.set("js", "javascript")
-        .set("go", "golang");
+	.set("go", "golang");
     output.getSession().setMode(`ace/mode/${langs.get(lang)}`);
 };
 
