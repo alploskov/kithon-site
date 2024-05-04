@@ -20,6 +20,13 @@ output.getSession().mergeUndoDeltas = true;
 output.setHighlightActiveLine(false);
 
 let set_output_lang = (lang) => {
+    if (lang == 'latex') {
+	document.querySelector("#output").style.display = "none";
+	document.querySelector("#latex_out").style.display = "block";
+	return;
+    }
+    document.querySelector("#output").style.display = "block";
+    document.querySelector("#latex_out").style.display = "none";
     let langs = new Map()
 	.set("lua", "lua")
 	.set("js", "javascript")
@@ -36,9 +43,14 @@ document.getElementById('chose-lang').addEventListener('change', (event) => {
 });
 
 let write_code = (code) => {
-    output.setValue(code);
-    output.clearSelection();
-    output.setHighlightActiveLine(false);
+    if (lang == 'latex') {
+	document.querySelector("#latex_out").innerHTML = '$$\\displaylines{' + code + '}$$';
+	MathJax.typeset();
+    } else {
+	output.setValue(code);
+	output.clearSelection();
+	output.setHighlightActiveLine(false);
+    }
 };
 
 let read_code = () => {

@@ -6,10 +6,31 @@
     <link rel="stylesheet" href="style.css" />
     <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     <script src="kithon/kithon.js"></script>
+    <script>
+      MathJax = {
+	  tex: {inlineMath: [['$', '$'], ['\\(', '\\)']]}
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
   </head>
   <body>
     <py-config>
       packages = ["kithon"]
+
+      [[fetch]]
+      from = "https://raw.githubusercontent.com/alploskov/kithon/master/translators/latex/core.tp"
+
+      [[fetch]]
+      from = "https://raw.githubusercontent.com/alploskov/kithon/master/translators/latex/math_symbols.tp"
+
+      [[fetch]]
+      from = "https://raw.githubusercontent.com/alploskov/kithon/master/translators/latex/macros.tp"
+
+      [[fetch]]
+      from = "https://raw.githubusercontent.com/alploskov/kithon/master/translators/latex/math_symbols.tp"
+
+      [[fetch]]
+      from = "https://raw.githubusercontent.com/alploskov/kithon/master/translators/latex/libs/math.tp"
     </py-config>
     <div id='panel'>
       <a href="https://github.com/alploskov/kithon"><b id='name'>&#60;Kithon&#62;</b></a>
@@ -19,19 +40,28 @@
 	  <option value="js">JavaScript</option>
 	  <option value="go">Go</option>
 	  <option value="lua">Lua</option>
+	  <option value="latex">LaTeX</option>
 	</select>
       </div>
     </div>
     <div id='editor' class='code'></div>
     <div id='output' class='code'></div>
+    <div id='latex_out' class='code'></div>
     <py-script>
       from kithon import Transpiler
 
-      
+
+      latex_tp = Transpiler()
+      latex_tp.load_templs(open('./core.tp', 'r').read())
+      latex_tp.load_templs(open('./macros.tp', 'r').read())
+      latex_tp.load_templs(open('./math_symbols.tp', 'r').read())
+      latex_tp.load_templs(open('./math.tp', 'r').read())
+
       transpilers = {
           "js": Transpiler(lang="js"),
           "go": Transpiler(lang="go"),
           "lua": Transpiler(lang="lua"),
+          "latex": latex_tp,
       }
       def gen(lang, code):
           return transpilers[lang].generate(code)

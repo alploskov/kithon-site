@@ -10,7 +10,7 @@
     left: 0;
 }
 
-#output {
+#output, #latex_out {
     right: 0;
 }
 
